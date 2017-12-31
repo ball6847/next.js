@@ -192,14 +192,14 @@ export default async function createCompiler (dir, { buildId, dev = false, quiet
   }
 
   const rules = (dev ? [{
-    test: /\.(js|jsx)(\?[^?]*)?$/,
+    test: /\.(js|jsx|tsx)(\?[^?]*)?$/,
     loader: 'hot-self-accept-loader',
     include: [
       join(dir, 'pages'),
       nextPagesDir
     ]
   }, {
-    test: /\.(js|jsx)(\?[^?]*)?$/,
+    test: /\.(js|jsx|tsx)(\?[^?]*)?$/,
     loader: 'react-hot-loader/webpack',
     exclude: /node_modules/
   }] : [])
@@ -207,7 +207,7 @@ export default async function createCompiler (dir, { buildId, dev = false, quiet
     test: /\.json$/,
     loader: 'json-loader'
   }, {
-    test: /\.(js|jsx|json)(\?[^?]*)?$/,
+    test: /\.(js|jsx|tsx|json)(\?[^?]*)?$/,
     loader: 'emit-file-loader',
     include: [dir, nextPagesDir],
     exclude (str) {
@@ -238,7 +238,7 @@ export default async function createCompiler (dir, { buildId, dev = false, quiet
       // But Node.js doesn't know how to handle them. So, we have to transpile them here.
       transform ({ content, sourceMap, interpolatedName }) {
         // Only handle .js files
-        if (!(/\.(js|jsx)$/.test(interpolatedName))) {
+        if (!(/\.(js|jsx|tsx)$/.test(interpolatedName))) {
           return { content, sourceMap }
         }
 
@@ -316,6 +316,16 @@ export default async function createCompiler (dir, { buildId, dev = false, quiet
       return /node_modules/.test(str)
     },
     options: mainBabelOptions
+  }, {
+    test: /\.tsx?(\?[^?]*)?$/,
+    loader: 'ts-loader',
+    include: [dir],
+    exclude (str) {
+      return /node_modules/.test(str)
+    },
+    options: {
+      transpileOnly: true
+    }
   }])
 
   let webpackConfig = {
