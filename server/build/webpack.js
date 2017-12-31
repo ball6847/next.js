@@ -317,7 +317,7 @@ export default async function createCompiler (dir, { buildId, dev = false, quiet
     },
     options: mainBabelOptions
   }, {
-    test: /\.tsx?(\?[^?]*)?$/,
+    test: /\.tsx(\?[^?]*)?$/,
     loader: 'ts-loader',
     include: [dir],
     exclude (str) {
